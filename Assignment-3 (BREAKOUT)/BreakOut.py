@@ -3,9 +3,13 @@
  Developed by Leonel Machava <leonelmachava@gmail.com>
 
  http://codeNtronix.com
+
+ editted by Cody Martin
 """
 import sys
 import pygame
+from pygame.locals import *
+import random
 
 SCREEN_SIZE   = 640,480
 
@@ -15,7 +19,7 @@ BRICK_HEIGHT  = 15
 PADDLE_WIDTH  = 60
 PADDLE_HEIGHT = 12
 BALL_DIAMETER = 16
-BALL_RADIUS   = BALL_DIAMETER / 2
+BALL_RADIUS   = int(int(BALL_DIAMETER) / int(2))
 
 MAX_PADDLE_X = SCREEN_SIZE[0] - PADDLE_WIDTH
 MAX_BALL_X   = SCREEN_SIZE[0] - BALL_DIAMETER
@@ -40,10 +44,10 @@ class Bricka:
 
     def __init__(self):
         pygame.init()
-        
+
         self.screen = pygame.display.set_mode(SCREEN_SIZE)
         pygame.display.set_caption("bricka (a breakout clone by codeNtronix.com)")
-        
+
         self.clock = pygame.time.Clock()
 
         if pygame.font:
@@ -53,7 +57,6 @@ class Bricka:
 
         self.init_game()
 
-        
     def init_game(self):
         self.lives = 3
         self.score = 0
@@ -65,7 +68,7 @@ class Bricka:
         self.ball_vel = [5,-5]
 
         self.create_bricks()
-        
+
 
     def create_bricks(self):
         y_ofs = 35
@@ -80,10 +83,10 @@ class Bricka:
     def draw_bricks(self):
         for brick in self.bricks:
             pygame.draw.rect(self.screen, BRICK_COLOR, brick)
-        
+
     def check_input(self):
         keys = pygame.key.get_pressed()
-        
+
         if keys[pygame.K_LEFT]:
             self.paddle.left -= 5
             if self.paddle.left < 0:
@@ -97,8 +100,27 @@ class Bricka:
         if keys[pygame.K_SPACE] and self.state == STATE_BALL_IN_PADDLE:
             self.ball_vel = [5,-5]
             self.state = STATE_PLAYING
+
         elif keys[pygame.K_RETURN] and (self.state == STATE_GAME_OVER or self.state == STATE_WON):
             self.init_game()
+
+        for event in pygame.event.get():
+            if event.type == MOUSEBUTTONUP and self.state == STATE_BALL_IN_PADDLE:
+                self.ball_vel = [5, -5]
+                self.state = STATE_PLAYING
+            elif event.type == MOUSEBUTTONUP and (self.state == STATE_GAME_OVER or self.state == STATE_WON):
+                self.init_game()
+            elif event.type == MOUSEMOTION:
+                self.paddle.centerx = event.pos[0]
+            elif event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == KEYUP:
+                if event.key == K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+
+
 
     def move_ball(self):
         self.ball.left += self.ball_vel[0]
@@ -110,11 +132,11 @@ class Bricka:
         elif self.ball.left >= MAX_BALL_X:
             self.ball.left = MAX_BALL_X
             self.ball_vel[0] = -self.ball_vel[0]
-        
+
         if self.ball.top < 0:
             self.ball.top = 0
             self.ball_vel[1] = -self.ball_vel[1]
-        elif self.ball.top >= MAX_BALL_Y:            
+        elif self.ball.top >= MAX_BALL_Y:
             self.ball.top = MAX_BALL_Y
             self.ball_vel[1] = -self.ball_vel[1]
 
@@ -128,7 +150,7 @@ class Bricka:
 
         if len(self.bricks) == 0:
             self.state = STATE_WON
-            
+
         if self.ball.colliderect(self.paddle):
             self.ball.top = PADDLE_Y - BALL_DIAMETER
             self.ball_vel[1] = -self.ball_vel[1]
@@ -151,10 +173,9 @@ class Bricka:
             x = (SCREEN_SIZE[0] - size[0]) / 2
             y = (SCREEN_SIZE[1] - size[1]) / 2
             self.screen.blit(font_surface, (x,y))
-        
-            
+
     def run(self):
-        while 1:            
+        while 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit
@@ -174,7 +195,7 @@ class Bricka:
                 self.show_message("GAME OVER. PRESS ENTER TO PLAY AGAIN")
             elif self.state == STATE_WON:
                 self.show_message("YOU WON! PRESS ENTER TO PLAY AGAIN")
-                
+
             self.draw_bricks()
 
             # Draw paddle
