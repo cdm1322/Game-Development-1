@@ -75,7 +75,7 @@ PADDLE_GFX = pygame.image.load("PNG/paddle_default.png")
 BOUNCE_SND = "AUDIO/bounce.wav"
 BG_SND = "AUDIO/background.mp3"
 
-class Bricka:
+class Breakout:
 
     def __init__(self):
         pygame.init()
@@ -299,17 +299,6 @@ class Bricka:
             self.screen.fill(BLACK)
             self.check_input()
 
-            if self.state == STATE_PLAYING:
-                self.move_ball()
-                self.handle_collisions()
-            elif self.state == STATE_BALL_IN_PADDLE:
-                self.ball['rect'].left = self.paddle['rect'].left + self.paddle['rect'].width / 2
-                self.ball['rect'].top  = self.paddle['rect'].top - self.ball['rect'].height
-                self.show_message("PRESS SPACE TO LAUNCH THE BALL")
-            elif self.state == STATE_GAME_OVER:
-                self.show_message("GAME OVER. PRESS ENTER TO PLAY AGAIN")
-            elif self.state == STATE_WON:
-                self.show_message("YOU WON! PRESS ENTER TO PLAY AGAIN")
 
             # Draw Background
             backgroundRect = pygame.Rect((0,0), (SCREEN_SIZE[0], SCREEN_SIZE[1]))
@@ -325,9 +314,22 @@ class Bricka:
             # Draw ball
             self.screen.blit(self.ball['surface'], self.ball['rect'])
 
+            if self.state == STATE_PLAYING:
+                self.move_ball()
+                self.handle_collisions()
+            elif self.state == STATE_BALL_IN_PADDLE:
+                self.ball['rect'].left = self.paddle['rect'].left + self.paddle['rect'].width / 2
+                self.ball['rect'].top  = self.paddle['rect'].top - self.ball['rect'].height
+                self.show_message("PRESS SPACE TO LAUNCH THE BALL")
+            elif self.state == STATE_GAME_OVER:
+                self.show_message("GAME OVER. PRESS ENTER TO PLAY AGAIN")
+            elif self.state == STATE_WON:
+                self.show_message("YOU WON! PRESS ENTER TO PLAY AGAIN")
+
+
             self.show_stats()
 
             pygame.display.flip()
 
 if __name__ == "__main__":
-    Bricka().run()
+    Breakout().run()
