@@ -88,7 +88,7 @@ class Breakout:
         self.clock = pygame.time.Clock()
 
         if pygame.font:
-            self.font = pygame.font.Font(None,30)
+            self.font = pygame.font.SysFont('Arial Black,Verdana,Arial', 22, False, False)
         else:
             self.font = None
 
@@ -97,6 +97,7 @@ class Breakout:
     def init_game(self):
         self.lives = 3
         self.score = 0
+
         self.state = STATE_BALL_IN_PADDLE
 
         self.paddle = {
@@ -277,7 +278,7 @@ class Breakout:
     def show_stats(self):
         if self.font:
             font_surface = self.font.render("SCORE: " + str(self.score) + " LIVES: " + str(self.lives), False, WHITE)
-            self.screen.blit(font_surface, (205,5))
+            self.screen.blit(font_surface, (100,5))
 
     def show_message(self,message):
         if self.font:
@@ -320,11 +321,11 @@ class Breakout:
             elif self.state == STATE_BALL_IN_PADDLE:
                 self.ball['rect'].left = self.paddle['rect'].left + self.paddle['rect'].width / 2
                 self.ball['rect'].top  = self.paddle['rect'].top - self.ball['rect'].height
-                self.show_message("PRESS SPACE TO LAUNCH THE BALL")
+                self.show_message("CLICK OR PRESS SPACE TO LAUNCH THE BALL")
             elif self.state == STATE_GAME_OVER:
-                self.show_message("GAME OVER. PRESS ENTER TO PLAY AGAIN")
+                self.show_message("GAME OVER. CLICK OR PRESS ENTER TO PLAY AGAIN")
             elif self.state == STATE_WON:
-                self.show_message("YOU WON! PRESS ENTER TO PLAY AGAIN")
+                self.show_message("YOU WON! CLICK OR PRESS ENTER TO PLAY AGAIN")
 
 
             self.show_stats()
