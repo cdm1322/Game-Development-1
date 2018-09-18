@@ -40,6 +40,9 @@ STATE_WON = 2
 STATE_GAME_OVER = 3
 
 # Graphic Assets
+# background
+BG_GFX = pygame.image.load("PNG/background.jpg")
+
 # Unbroken Bricks
 TILE1 = pygame.image.load("PNG/tile1-1.png")
 TILE2 = pygame.image.load("PNG/tile2-1.png")
@@ -205,6 +208,10 @@ class Bricka:
                 self.init_game()
             elif event.type == MOUSEMOTION:
                 self.paddle['rect'].centerx = event.pos[0]
+                if self.paddle['rect'].left < 0:
+                    self.paddle['rect'].left = 0
+                elif self.paddle['rect'].left > MAX_PADDLE_X:
+                    self.paddle['rect'].left = MAX_PADDLE_X
             elif event.type == QUIT:
                 pygame.quit()
                 sys.exit()
@@ -282,6 +289,7 @@ class Bricka:
 
     def run(self):
         pygame.mixer.music.play(-1, 0.0)
+
         while 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -303,6 +311,12 @@ class Bricka:
             elif self.state == STATE_WON:
                 self.show_message("YOU WON! PRESS ENTER TO PLAY AGAIN")
 
+            # Draw Background
+            backgroundRect = pygame.Rect((0,0), (SCREEN_SIZE[0], SCREEN_SIZE[1]))
+            backgroundImage = pygame.transform.scale(BG_GFX, backgroundRect.size)
+            self.screen.blit(backgroundImage, backgroundRect)
+
+            # Draw Bricks
             self.draw_bricks()
 
             # Draw paddle
