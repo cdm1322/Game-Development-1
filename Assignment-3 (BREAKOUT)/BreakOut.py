@@ -1,17 +1,16 @@
 """
- bricka (a breakout clone)
- Developed by Leonel Machava <leonelmachava@gmail.com>
+starting code via: http://codeNtronix.com
 
- http://codeNtronix.com
+editted by Cody Martin and Genesis Stroud at the University of South Alabama
+added: graphics, levels, sounds, user controls
 
- editted by Cody Martin
 """
 import sys
 import pygame
 from pygame.locals import *
 import random
 
-SCREEN_SIZE   = 1280,960
+SCREEN_SIZE   = 1280,640
 
 # Object dimensions
 BRICK_WIDTH   = 120
@@ -69,6 +68,10 @@ BROKEN10 = pygame.image.load("PNG/tile10-2.png")
 BALL_GFX = pygame.image.load("PNG/ball.png")
 PADDLE_GFX = pygame.image.load("PNG/paddle_default.png")
 
+# Audio Assets
+BOUNCE_SND = "AUDIO/bounce.wav"
+BG_SND = "AUDIO/background.mp3"
+
 class Bricka:
 
     def __init__(self):
@@ -76,8 +79,8 @@ class Bricka:
 
         self.screen = pygame.display.set_mode(SCREEN_SIZE)
 
-
-        pygame.display.set_caption("bricka (a breakout clone by codeNtronix.com)")
+        pygame.mixer.music.load(BG_SND)
+        pygame.display.set_caption("A Breakout Clone")
 
         self.clock = pygame.time.Clock()
 
@@ -219,16 +222,20 @@ class Bricka:
         if self.ball['rect'].left <= 0:
             self.ball['rect'].left = 0
             self.ball_vel[0] = -self.ball_vel[0]
+            pygame.mixer.Sound(BOUNCE_SND).play()
         elif self.ball['rect'].left >= MAX_BALL_X:
             self.ball['rect'].left = MAX_BALL_X
             self.ball_vel[0] = -self.ball_vel[0]
+            pygame.mixer.Sound(BOUNCE_SND).play()
 
         if self.ball['rect'].top < 0:
             self.ball['rect'].top = 0
             self.ball_vel[1] = -self.ball_vel[1]
+            pygame.mixer.Sound(BOUNCE_SND).play()
         elif self.ball['rect'].top >= MAX_BALL_Y:
             self.ball['rect'].top = MAX_BALL_Y
             self.ball_vel[1] = -self.ball_vel[1]
+            pygame.mixer.Sound(BOUNCE_SND).play()
 
     def handle_collisions(self):
         for brick in self.bricks:
@@ -236,11 +243,13 @@ class Bricka:
                 self.score += 3
                 self.ball_vel[1] = -self.ball_vel[1]
                 self.bricks.remove(brick)
+                pygame.mixer.Sound(BOUNCE_SND).play()
                 break
             elif self.ball['rect'].colliderect(brick['rect']) and brick['broken'] is False:
                 brick['surface'] = self.break_brick_surface(brick['number'])
                 brick['broken'] = True
                 self.ball_vel[1] = -self.ball_vel[1]
+                pygame.mixer.Sound(BOUNCE_SND).play()
                 break
 
         if len(self.bricks) == 0:
@@ -249,6 +258,8 @@ class Bricka:
         if self.ball['rect'].colliderect(self.paddle['rect']):
             self.ball['rect'].top = PADDLE_Y - BALL_DIAMETER
             self.ball_vel[1] = -self.ball_vel[1]
+            pygame.mixer.Sound(BOUNCE_SND).play()
+
         elif self.ball['rect'].top > self.paddle['rect'].top:
             self.lives -= 1
             if self.lives > 0:
@@ -270,6 +281,7 @@ class Bricka:
             self.screen.blit(font_surface, (x,y))
 
     def run(self):
+        pygame.mixer.music.play(-1, 0.0)
         while 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
