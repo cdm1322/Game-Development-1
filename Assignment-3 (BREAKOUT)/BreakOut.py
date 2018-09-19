@@ -39,6 +39,8 @@ STATE_PLAYING = 1
 STATE_WON = 2
 STATE_GAME_OVER = 3
 
+MAX_LEVEL = 3
+
 # Graphic Assets
 # background
 BG_GFX = pygame.image.load("PNG/background.jpg")
@@ -97,6 +99,7 @@ class Breakout:
     def init_game(self):
         self.lives = 3
         self.score = 0
+        self.current_level = 1
 
         self.state = STATE_BALL_IN_PADDLE
 
@@ -117,22 +120,55 @@ class Breakout:
 
 
     def create_bricks(self):
-        y_ofs = 35
-        self.bricks = []
-        for i in range(7):
+        if self.current_level == 1:
+            y_ofs = 35
+            self.bricks = []
+            for i in range(7):
+                x_ofs = 35
+                for j in range(9):
+                    brick_number = random.randint(1,10)
+                    brick = {
+                        'number' : brick_number,
+                        'rect' : pygame.Rect(x_ofs,y_ofs,BRICK_WIDTH,BRICK_HEIGHT),
+                        'surface' : self.get_brick_surface(brick_number),
+                        'broken' : False
+                    }
+                    self.bricks.append(brick)
+                    x_ofs += BRICK_WIDTH + 10
+                y_ofs += BRICK_HEIGHT + 5
+        elif self.current_level == 2:
+            y_ofs = 35
+            for i in range(5):
+                x_ofs = 35
+                for j in range(8):
+                    brick_number = {
+                        'number': brick_number,
+                        'rect': pygame.Rect(x_ofs, y_ofs, BRICK_WIDTH, BRICK_HEIGHT),
+                        'surface': self.get_brick_surface(brick_number),
+                        'broken': False
+                    }
+                    self.bricks.append(brick)
+                    x_ofs += BRICK_WIDTH + 10
+                if i == 1 or i == 3:
+                    y_ofs += BRICK_HEIGHT + BRICK_HEIGHT + 10
+                else:
+                    y_ofs += BRICK_HEIGHT + 5
+        else:
             x_ofs = 35
-            for j in range(9):
-                brick_number = random.randint(1,10)
-                brick = {
-                    'number' : brick_number,
-                    'rect' : pygame.Rect(x_ofs,y_ofs,BRICK_WIDTH,BRICK_HEIGHT),
-                    'surface' : self.get_brick_surface(brick_number),
-                    'broken' : False
-                }
-                self.bricks.append(brick)
+            for y in range(4):
+                if y == 0 or y == 1 or y == 3:
+                    x_ofs += BRICK_WIDTH + 10
+                for x in range(7):
+                    brick_number = {
+                        'number': brick_number,
+                        'rect': pygame.Rect(x_ofs, y_ofs, BRICK_WIDTH, BRICK_HEIGHT),
+                        'surface': self.get_brick_surface(brick_number),
+                        'broken': False
+                    }
+                    self.bricks.append(brick)
+                    y_ofs += BRICK_HEIGHT + 5
                 x_ofs += BRICK_WIDTH + 10
-            y_ofs += BRICK_HEIGHT + 5
-
+                
     def get_brick_surface(self, number):
         if number == 1:
             return pygame.transform.scale(TILE1, (BRICK_WIDTH, BRICK_HEIGHT))
@@ -261,7 +297,13 @@ class Breakout:
                 break
 
         if len(self.bricks) == 0:
-            self.state = STATE_WON
+            if self.current_level != MAX_LEVEL:
+                self.state = STATE_BALL_IN_PADDLE
+                self.create_bricks()
+                self.draw_bricks
+                self.current_level += 1
+            else:
+                self.state = STATE_WON
 
         if self.ball['rect'].colliderect(self.paddle['rect']):
             self.ball['rect'].top = PADDLE_Y - BALL_DIAMETER
