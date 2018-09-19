@@ -94,12 +94,12 @@ class Breakout:
         else:
             self.font = None
 
-        self.init_game()
+        self.init_game(1, 0, 3)
 
-    def init_game(self):
-        self.lives = 3
-        self.score = 0
-        self.current_level = 1
+    def init_game(self, level=1, score=0, lives=3):
+        self.lives = lives
+        self.score = score
+        self.current_level = level
 
         self.state = STATE_BALL_IN_PADDLE
 
@@ -141,7 +141,8 @@ class Breakout:
             for i in range(5):
                 x_ofs = 35
                 for j in range(8):
-                    brick_number = {
+                    brick_number = random.randint(1,10)
+                    brick = {
                         'number': brick_number,
                         'rect': pygame.Rect(x_ofs, y_ofs, BRICK_WIDTH, BRICK_HEIGHT),
                         'surface': self.get_brick_surface(brick_number),
@@ -158,8 +159,10 @@ class Breakout:
             for y in range(4):
                 if y == 0 or y == 1 or y == 3:
                     x_ofs += BRICK_WIDTH + 10
+                    y_ofs = 35
                 for x in range(7):
-                    brick_number = {
+                    brick_number = random.randint(1,10)
+                    brick = {
                         'number': brick_number,
                         'rect': pygame.Rect(x_ofs, y_ofs, BRICK_WIDTH, BRICK_HEIGHT),
                         'surface': self.get_brick_surface(brick_number),
@@ -168,7 +171,7 @@ class Breakout:
                     self.bricks.append(brick)
                     y_ofs += BRICK_HEIGHT + 5
                 x_ofs += BRICK_WIDTH + 10
-                
+
     def get_brick_surface(self, number):
         if number == 1:
             return pygame.transform.scale(TILE1, (BRICK_WIDTH, BRICK_HEIGHT))
@@ -256,6 +259,9 @@ class Breakout:
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()
+                elif event.key == K_DOWN:
+                    for brick in self.bricks:
+                        self.bricks.remove(brick)
 
 
 
@@ -297,13 +303,14 @@ class Breakout:
                 break
 
         if len(self.bricks) == 0:
-            if self.current_level != MAX_LEVEL:
-                self.state = STATE_BALL_IN_PADDLE
-                self.create_bricks()
-                self.draw_bricks
-                self.current_level += 1
-            else:
-                self.state = STATE_WON
+            self.state = STATE_WON
+            #if self.current_level != MAX_LEVEL:
+            #    self.state = STATE_BALL_IN_PADDLE
+            #    self.create_bricks()
+            #    self.draw_bricks()
+            #    self.current_level += 1
+            #else:
+            #    self.state = STATE_WON
 
         if self.ball['rect'].colliderect(self.paddle['rect']):
             self.ball['rect'].top = PADDLE_Y - BALL_DIAMETER
@@ -366,6 +373,8 @@ class Breakout:
                 self.show_message("CLICK OR PRESS SPACE TO LAUNCH THE BALL")
             elif self.state == STATE_GAME_OVER:
                 self.show_message("GAME OVER. CLICK OR PRESS ENTER TO PLAY AGAIN")
+            elif self.state == STATE_WON and self.current_level is not MAX_LEVEL:
+                self.init_game(self.current_level+1, self.score, self.lives)
             elif self.state == STATE_WON:
                 self.show_message("YOU WON! CLICK OR PRESS ENTER TO PLAY AGAIN")
 
