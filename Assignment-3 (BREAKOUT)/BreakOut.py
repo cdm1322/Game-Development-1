@@ -221,17 +221,17 @@ class Breakout:
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_LEFT]:
-            self.paddle['rect'].left -= 5
+            self.paddle['rect'].left -= 13
             if self.paddle['rect'].left < 0:
                 self.paddle['rect'].left = 0
 
         if keys[pygame.K_RIGHT]:
-            self.paddle['rect'].left += 5
+            self.paddle['rect'].left += 13
             if self.paddle['rect'].left > MAX_PADDLE_X:
                 self.paddle['rect'].left = MAX_PADDLE_X
 
         if keys[pygame.K_SPACE] and self.state == STATE_BALL_IN_PADDLE:
-            self.ball_vel = [5,-5]
+            self.ball_vel = [10,-10]
             self.state = STATE_PLAYING
 
         elif keys[pygame.K_RETURN] and (self.state == STATE_GAME_OVER or self.state == STATE_WON):
@@ -239,7 +239,7 @@ class Breakout:
 
         for event in pygame.event.get():
             if event.type == MOUSEBUTTONUP and self.state == STATE_BALL_IN_PADDLE:
-                self.ball_vel = [5, -5]
+                self.ball_vel = [10, -10]
                 self.state = STATE_PLAYING
             elif event.type == MOUSEBUTTONUP and (self.state == STATE_GAME_OVER or self.state == STATE_WON):
                 self.init_game()
