@@ -1,9 +1,5 @@
 """
 starting code via: http://codeNtronix.com
-
-editted by Cody Martin and Genesis Stroud at the University of South Alabama
-added: graphics, levels, sounds, user controls
-
 """
 import sys
 import pygame
